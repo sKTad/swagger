@@ -1,76 +1,140 @@
----
-swagger: "2.0"
+openapi: 3.0.0
+servers:
+  # Added by API Auto Mocking Plugin
+  # Added by API Auto Mocking Plugin
+  # Added by API Auto Mocking Plugin
+  # Added by API Auto Mocking Plugin
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/PRIYANKABALAG/archivalapi/1.0.0
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/PRIYANKABALAG/archival/1.0.0
+  - description: archival
+    url: https://virtserver.swaggerhub.com/archivalupload
 info:
-  description: "This is a sample server Petstore server.  You can find out more about\
-    \ Swagger at [http://swagger.io](http://swagger.io) or on [irc.freenode.net, #swagger](http://swagger.io/irc/).\
-    \  For this sample, you can use the api key `special-key` to test the authorization\
-    \ filters."
-  version: "1.0.5"
-  title: "Swagger Petstore"
-  termsOfService: "http://swagger.io/terms/"
+  description: This API enables the customer to upload file along with metadata 
+  version: "1.0.0"
+  title: Archival GEMS API
   contact:
-    email: "apiteam@swagger.io"
-  license:
-    name: "Apache 2.0"
-    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
-host: "petstore.swagger.io"
-basePath: "/v2"
-tags:
-- name: "store"
-  description: "Access to Petstore orders"
-schemes:
-- "https"
-- "http"
+    email: priyanka.guddanti@directv.com
 paths:
-  /store/order:
-    post:
-      tags:
-      - "store"
-      summary: "Place an order for a pet"
-      description: ""
-      operationId: "placeOrder"
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
-      - "application/xml"
-      parameters:
-      - in: "body"
-        name: "body"
-        description: "order placed for purchasing the pet"
-        required: true
-        schema:
-          $ref: "#/definitions/Order"
+  /archivalupload:
+   post:
+      security: 
+        - basicAuth: []
+      operationId: addtoarchive
       responses:
-        200:
-          description: "successful operation"
-          schema:
-            $ref: "#/definitions/Order"
-        400:
-          description: "Invalid Order"
-securityDefinitions:
-  api_key:
-    type: "apiKey"
-    name: "api_key"
-    in: "header"
-  petstore_auth:
-    type: "oauth2"
-    authorizationUrl: "https://petstore.swagger.io/oauth/authorize"
-    flow: "implicit"
-    scopes:
-      read:pets: "read your pets"
-      write:pets: "modify pets in your account"
-definitions:
-  ApiResponse:
-    type: "object"
-    properties:
-      code:
-        type: "integer"
-        format: "int32"
-      type:
-        type: "string"
-      message:
-        type: "string"
-externalDocs:
-  description: "Find out more about Swagger"
-  url: "http://swagger.io"
+        '200':
+          description: 'Posted successfully'
+        '500':
+          description: 'Processing Failed'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '400':
+          description: 'invalid input, object invalid'
+        '503':
+          description: 'Service Unavailable'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: upload file
+                metadata:
+                  $ref: '#/components/schemas/GemFileMetadata'
+              required:
+                - file
+                - metadata
+security: 
+   - basicAuth: []
+components:
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+  responses:
+    UnauthorizedError:
+      description: Authentication information is missing or invalid
+  schemas:
+    GemFileMetadata:
+      type: object
+      properties:
+        source:
+          type: string
+          example: DTV-OMS
+        content_type:
+          type: string
+          example: pdf
+        doc_type:
+          type: string
+          example: GEM broadband consent
+        retention:
+          type: string
+          example: 7
+        size:
+          type: string
+          example: 1084
+        digest:
+          type: string
+          example: "0b91043ee484abd83c3e4b08d6034d71b937026379f0f59bda6e625e6e214789"
+        digest_type:
+          type: string
+          example: "SHA256"
+        search:
+          $ref: '#/components/schemas/SearchItems'
+      required:
+        - source
+        - content_type
+        - doc_type
+        - retention
+        - size
+        - digest
+        - digest_type
+        - search
+    SearchItems:
+      properties:
+        acc_num:
+          type: integer
+          format: int32
+          example: 1277767
+        biller:
+          type: string
+          example: "STMS"
+        order_id:
+          type: integer
+          format: int32
+          example: 1005678
+        consent_datetime:
+          type: string
+          format: date-time
+          example: '2016-08-29T09:12:33.001Z'
+        agent_id:
+          type: string
+          example: "1200238"
+        agent_type:
+          type: string
+          example: "call center"
+        source_system:
+          type: string
+          example: "DTV-OMS"
+        broadband_status:
+          type: string
+          example: "system shows connected"
+        broadband_consent:
+          type: string
+          example: "broadband requirement explained"
+      required:
+        - biller
+        - order_id
+        - consent_datetime
+        - agent_id
+        - agent_type
+        - source_system
+        - broadband_status
+        - broadband_consent
+      type: object
