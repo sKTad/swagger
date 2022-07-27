@@ -1,16 +1,4 @@
 openapi: 3.0.0
-servers:
-  # Added by API Auto Mocking Plugin
-  # Added by API Auto Mocking Plugin
-  # Added by API Auto Mocking Plugin
-  # Added by API Auto Mocking Plugin
-  # Added by API Auto Mocking Plugin
-  - description: SwaggerHub API Auto Mocking
-    url: https://virtserver.swaggerhub.com/PRIYANKABALAG/archivalapi/1.0.0
-  - description: SwaggerHub API Auto Mocking
-    url: https://virtserver.swaggerhub.com/PRIYANKABALAG/archival/1.0.0
-  - description: archival
-    url: https://virtserver.swaggerhub.com/archivalupload
 info:
   description: This API enables the customer to upload file along with metadata 
   version: "1.0.0"
